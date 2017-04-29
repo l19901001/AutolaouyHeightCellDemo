@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "FPSDisplay.h"
 
-@interface ViewController ()
+@interface ViewController () 
+
+@property(nonatomic, strong) NSArray *rows;
 
 @end
 
@@ -16,7 +19,42 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.navigationItem.title = NSStringFromClass([self class]);
+    _rows = @[@"ViewController_frame", @"ViewController_autolayout"];
+    
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [FPSDisplay shareFPSDisplay];
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 2;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"mainCell"];
+    if(cell == nil){
+        cell = [[NSBundle mainBundle] loadNibNamed:@"mainCell" owner:self options:nil].firstObject;
+    }
+    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.textLabel.text = _rows[indexPath.row];
+    
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *className = _rows[indexPath.row];
+    UIViewController *vc = [NSClassFromString(className) new];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 
